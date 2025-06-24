@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:hadoc_app/models/user_model.dart';
+
 import 'package:hadoc_app/providers/user_provider.dart';
 import 'package:hadoc_app/utils/theme.dart';
 
@@ -104,9 +104,16 @@ class ProfileScreen extends StatelessWidget {
                   width: double.infinity,
                   child: OutlinedButton(
                     onPressed: () async {
+                      print('DEBUG: Logout button pressed');
                       await userProvider.logout();
+                      print('DEBUG: Logout completed');
                       if (context.mounted) {
-                        Navigator.pushReplacementNamed(context, '/login');
+                        print('DEBUG: Navigating to auth screen');
+                        Navigator.pushNamedAndRemoveUntil(
+                          context, 
+                          '/auth', 
+                          (route) => false,
+                        );
                       }
                     },
                     style: OutlinedButton.styleFrom(

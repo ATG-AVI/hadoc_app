@@ -1,0 +1,45 @@
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import os
+import warnings
+import matplotlib.pyplot as plt
+from keras.utils.np_utils import to_categorical
+from keras.layers import Input, Conv1D, Dense, Flatten, MaxPool1D
+from keras.layers import BatchNormalization
+from keras.models import Model
+warnings.filterwarnings('ignore')
+
+train_df=pd.read_csv(r'C:/Users/Ayush/Desktop/mitbih_train/mitbih_train.csv',header=None)
+test_df=pd.read_csv(r'C:/Users/Ayush/Desktop/mitbih_test/mitbih_test.csv',header=None)
+
+target_train=train_df[187]
+target_test=test_df[187]
+y_train=to_categorical(target_train)
+y_test=to_categorical(target_test)
+
+X_train=train_df.iloc[:,:186].values
+X_test=test_df.iloc[:,:186].values
+X_train = X_train.reshape(len(X_train), X_train.shape[1],1)
+X_test = X_test.reshape(len(X_test), X_test.shape[1],1)
+
+im_shape=(X_train.shape[1],1)
+inputs_cnn=Input(shape=(im_shape), name='inputs_cnn')
+conv1_1=Conv1D(64, (6), activation='relu', input_shape=im_shape)(inputs_cnn)
+conv1_1=BatchNormalization()(conv1_1)
+pool1=MaxPool1D(pool_size=(3), strides=(2), padding="same")(conv1_1)
+conv2_1=Conv1D(64, (3), activation='relu', input_shape=im_shape)(pool1)
+conv2_1=BatchNormalization()(conv2_1)
+pool2=MaxPool1D(pool_size=(2), strides=(2), padding="same")(conv2_1)
+conv3_1=Conv1D(64, (3), activation='relu', input_shape=im_shape)(pool2)
+conv3_1=BatchNormalization()(conv3_1)
+pool3=MaxPool1D(pool_size=(2), strides=(2), padding="same")(conv3_1)
+flatten=Flatten()(pool2)
+dense_end1 = Dense(64, activation='relu')(flatten)
+main_output = Dense(5, activation='softmax', name='main_output')(dense_end1)
+
+model = Model(inputs= inputs_cnn, outputs=main_output)
+model.compile(optimizer='adam', loss='categorical_crossentropy',metrics = ['accuracy'])
+history=model.fit(X_train,y_train,epochs=100)
+
+model.evaluate(X_test, y_test)

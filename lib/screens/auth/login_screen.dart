@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:hadoc_app/models/user_model.dart';
+
 import 'package:hadoc_app/providers/user_provider.dart';
 import 'package:hadoc_app/utils/theme.dart';
+import 'package:hadoc_app/services/supabase_service.dart';
+import 'package:hadoc_app/screens/auth/user_details_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final String selectedRole;
+  
+  const LoginScreen({
+    super.key,
+    required this.selectedRole,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -16,7 +23,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
-  String _selectedRole = 'patient';
 
   @override
   void dispose() {
@@ -27,45 +33,73 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
+      print('DEBUG: Login form validated');
       setState(() {
         _isLoading = true;
       });
 
       try {
-        // Simulate API call delay
-        await Future.delayed(const Duration(seconds: 1));
-
-        // Create a dummy user for demo
-        final user = UserModel(
-          name: 'John Doe',
+        print('DEBUG: Getting UserProvider');
+        final userProvider = context.read<UserProvider>();
+        
+        print('DEBUG: Calling userProvider.signIn');
+        final success = await userProvider.signIn(
           email: _emailController.text.trim(),
-          age: 30,
-          gender: 'Male',
-          phoneNumber: '+1234567890',
-          address: '123 Main St, City, Country',
-          role: _selectedRole,
+          password: _passwordController.text.trim(),
         );
 
-        // Set user in provider
-        await context.read<UserProvider>().setUser(user);
-
+        print('DEBUG: SignIn success: $success');
         if (mounted) {
-          // Navigate based on role
-          Navigator.pushReplacementNamed(
-            context,
-            _selectedRole == 'patient' ? '/patient' : '/doctor',
-          );
+          if (success && userProvider.user != null) {
+            print('DEBUG: Login successful, navigating to dashboard');
+            // Navigate based on role
+            Navigator.pushReplacementNamed(
+              context,
+              userProvider.user!.role == 'patient' ? '/patient' : '/doctor',
+            );
+          } else {
+            print('DEBUG: Login failed, showing error');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(userProvider.error ?? 'Login failed. Please try again.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      } on ProfileIncompleteException catch (e) {
+        print('DEBUG: ProfileIncompleteException caught in LoginScreen: $e');
+        if (mounted) {
+          // Get the authenticated user's email and role from Supabase Auth
+          final authUser = SupabaseService.instance.client.auth.currentUser;
+          print('DEBUG: Auth user: ${authUser?.email}');
+          if (authUser != null) {
+            print('DEBUG: Navigating to UserDetailsScreen');
+            // Navigate to user details screen to complete profile
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => UserDetailsScreen(
+                  email: authUser.email ?? _emailController.text.trim(),
+                  role: widget.selectedRole,
+                ),
+              ),
+            );
+          }
         }
       } catch (e) {
+        print('DEBUG: Other exception caught in LoginScreen: $e');
+        print('DEBUG: Exception type: ${e.runtimeType}');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Login failed. Please try again.'),
+            SnackBar(
+              content: Text('Login failed: $e'),
               backgroundColor: Colors.red,
             ),
           );
         }
       } finally {
+        print('DEBUG: Login finally block');
         if (mounted) {
           setState(() {
             _isLoading = false;
@@ -78,32 +112,74 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.backgroundPrimary,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: AppTheme.textPrimary),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SafeArea(
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(AppTheme.spacingLG),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 48),
-                Text(
-                  'Welcome to Hadoc',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.bold,
+                const SizedBox(height: AppTheme.spacingXL),
+                
+                // Role indicator
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingMD,
+                    vertical: AppTheme.spacingSM,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryTeal.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSM),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        widget.selectedRole == 'patient' 
+                            ? Icons.person_outline 
+                            : Icons.medical_services_outlined,
+                        size: 16,
+                        color: AppTheme.primaryTeal,
                       ),
+                      const SizedBox(width: AppTheme.spacingXS),
+                      Text(
+                        'Signing in as ${widget.selectedRole}',
+                        style: AppTheme.captionStyle.copyWith(
+                          color: AppTheme.primaryTeal,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                const SizedBox(height: AppTheme.spacingXL),
+                
+                Text(
+                  'Welcome Back',
+                  style: AppTheme.titleStyle.copyWith(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                  ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppTheme.spacingSM),
                 Text(
-                  'Please sign in to continue',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                  'Sign in to continue to HaDoc',
+                  style: AppTheme.subtitleStyle,
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: AppTheme.spacing2XL),
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
@@ -138,35 +214,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     }
                     return null;
                   },
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: RadioListTile<String>(
-                        title: const Text('Patient'),
-                        value: 'patient',
-                        groupValue: _selectedRole,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedRole = value!;
-                          });
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: RadioListTile<String>(
-                        title: const Text('Doctor'),
-                        value: 'doctor',
-                        groupValue: _selectedRole,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedRole = value!;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(

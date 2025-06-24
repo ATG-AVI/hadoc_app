@@ -1,0 +1,514 @@
+{
+  "designSystem": {
+    "name": "Healthcare Mobile App Design System",
+    "version": "1.0",
+    
+    "colors": {
+      "primary": {
+        "purple": "#8B5CF6",
+        "teal": "#14B8A6",
+        "blue": "#3B82F6"
+      },
+      "background": {
+        "primary": "#FFFFFF",
+        "secondary": "#F8FAFC",
+        "card": "#FFFFFF"
+      },
+      "text": {
+        "primary": "#1F2937",
+        "secondary": "#6B7280",
+        "muted": "#9CA3AF"
+      },
+      "accent": {
+        "success": "#10B981",
+        "warning": "#F59E0B",
+        "error": "#EF4444"
+      },
+      "gradients": {
+        "purple": ["#8B5CF6", "#A855F7"],
+        "teal": ["#14B8A6", "#0D9488"]
+      }
+    },
+
+    "typography": {
+      "fontFamily": "System",
+      "sizes": {
+        "xs": "12px",
+        "sm": "14px",
+        "base": "16px",
+        "lg": "18px",
+        "xl": "20px",
+        "2xl": "24px",
+        "3xl": "30px"
+      },
+      "weights": {
+        "normal": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      },
+      "hierarchy": {
+        "title": {
+          "fontSize": "20px",
+          "fontWeight": 600,
+          "color": "text.primary"
+        },
+        "subtitle": {
+          "fontSize": "16px",
+          "fontWeight": 500,
+          "color": "text.secondary"
+        },
+        "body": {
+          "fontSize": "14px",
+          "fontWeight": 400,
+          "color": "text.primary"
+        },
+        "caption": {
+          "fontSize": "12px",
+          "fontWeight": 400,
+          "color": "text.muted"
+        }
+      }
+    },
+
+    "spacing": {
+      "xs": "4px",
+      "sm": "8px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "32px",
+      "2xl": "48px"
+    },
+
+    "borderRadius": {
+      "sm": "8px",
+      "md": "12px",
+      "lg": "16px",
+      "xl": "20px",
+      "full": "9999px"
+    },
+
+    "shadows": {
+      "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+      "md": "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+      "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.1)"
+    },
+
+    "components": {
+      "statusBar": {
+        "height": "44px",
+        "backgroundColor": "background.primary",
+        "elements": {
+          "time": { "position": "left", "fontWeight": "semibold" },
+          "signals": { "position": "right", "spacing": "sm" }
+        }
+      },
+
+      "navigationHeader": {
+        "height": "56px",
+        "padding": "md",
+        "backgroundColor": "background.primary",
+        "elements": {
+          "backButton": {
+            "size": "24px",
+            "position": "left"
+          },
+          "title": {
+            "typography": "title",
+            "position": "center"
+          }
+        }
+      },
+
+      "userGreeting": {
+        "layout": "horizontal",
+        "padding": "md",
+        "elements": {
+          "avatar": {
+            "size": "40px",
+            "borderRadius": "full"
+          },
+          "greeting": {
+            "typography": "subtitle",
+            "marginLeft": "sm"
+          },
+          "badge": {
+            "backgroundColor": "warning",
+            "borderRadius": "full",
+            "padding": "xs sm",
+            "typography": "caption"
+          }
+        }
+      },
+
+      "searchBar": {
+        "height": "48px",
+        "backgroundColor": "background.secondary",
+        "borderRadius": "md",
+        "padding": "sm md",
+        "margin": "md",
+        "placeholder": {
+          "typography": "body",
+          "color": "text.muted"
+        }
+      },
+
+      "actionCards": {
+        "layout": "grid",
+        "columns": 2,
+        "gap": "md",
+        "margin": "md",
+        "card": {
+          "borderRadius": "lg",
+          "padding": "lg",
+          "minHeight": "120px",
+          "variants": {
+            "primary": {
+              "backgroundColor": "primary.purple",
+              "color": "white"
+            },
+            "secondary": {
+              "backgroundColor": "primary.teal",
+              "color": "white"
+            }
+          },
+          "elements": {
+            "illustration": {
+              "size": "60px",
+              "position": "top"
+            },
+            "title": {
+              "typography": "subtitle",
+              "marginTop": "sm"
+            },
+            "button": {
+              "backgroundColor": "rgba(255,255,255,0.2)",
+              "borderRadius": "sm",
+              "padding": "xs sm",
+              "marginTop": "sm"
+            }
+          }
+        }
+      },
+
+      "sectionHeader": {
+        "layout": "horizontal",
+        "justifyContent": "space-between",
+        "alignItems": "center",
+        "padding": "md",
+        "title": {
+          "typography": "title"
+        },
+        "action": {
+          "typography": "body",
+          "color": "primary.blue"
+        }
+      },
+
+      "iconGrid": {
+        "layout": "grid",
+        "columns": 4,
+        "gap": "md",
+        "padding": "md",
+        "item": {
+          "layout": "vertical",
+          "alignItems": "center",
+          "padding": "sm",
+          "icon": {
+            "size": "48px",
+            "backgroundColor": "background.secondary",
+            "borderRadius": "md",
+            "padding": "sm"
+          },
+          "label": {
+            "typography": "caption",
+            "marginTop": "xs",
+            "textAlign": "center"
+          }
+        }
+      },
+
+      "listItem": {
+        "layout": "horizontal",
+        "padding": "md",
+        "backgroundColor": "background.card",
+        "borderRadius": "md",
+        "margin": "xs md",
+        "shadow": "sm",
+        "elements": {
+          "icon": {
+            "size": "24px",
+            "marginRight": "sm"
+          },
+          "content": {
+            "flex": 1,
+            "title": {
+              "typography": "body",
+              "fontWeight": "medium"
+            },
+            "subtitle": {
+              "typography": "caption",
+              "color": "text.muted",
+              "marginTop": "xs"
+            }
+          },
+          "action": {
+            "size": "20px",
+            "color": "text.muted"
+          }
+        }
+      },
+
+      "doctorCard": {
+        "layout": "horizontal",
+        "padding": "lg",
+        "backgroundColor": "background.card",
+        "borderRadius": "lg",
+        "margin": "md",
+        "elements": {
+          "avatar": {
+            "size": "64px",
+            "borderRadius": "full"
+          },
+          "info": {
+            "marginLeft": "md",
+            "flex": 1,
+            "name": {
+              "typography": "title"
+            },
+            "specialty": {
+              "typography": "body",
+              "color": "text.secondary",
+              "marginTop": "xs"
+            },
+            "experience": {
+              "typography": "caption",
+              "color": "text.muted",
+              "marginTop": "xs"
+            },
+            "ratings": {
+              "layout": "horizontal",
+              "marginTop": "xs",
+              "alignItems": "center",
+              "star": {
+                "color": "accent.success",
+                "size": "14px"
+              },
+              "text": {
+                "typography": "caption",
+                "marginLeft": "xs"
+              }
+            }
+          }
+        }
+      },
+
+      "appointmentDetails": {
+        "padding": "md",
+        "backgroundColor": "background.secondary",
+        "borderRadius": "md",
+        "margin": "md",
+        "elements": {
+          "time": {
+            "typography": "body",
+            "fontWeight": "medium"
+          },
+          "duration": {
+            "typography": "caption",
+            "color": "text.muted",
+            "marginTop": "xs"
+          }
+        }
+      },
+
+      "billingSection": {
+        "padding": "md",
+        "elements": {
+          "row": {
+            "layout": "horizontal",
+            "justifyContent": "space-between",
+            "padding": "sm 0",
+            "label": {
+              "typography": "body"
+            },
+            "value": {
+              "typography": "body",
+              "fontWeight": "medium"
+            }
+          },
+          "total": {
+            "borderTop": "1px solid text.muted",
+            "paddingTop": "sm",
+            "fontWeight": "semibold"
+          }
+        }
+      },
+
+      "primaryButton": {
+        "height": "48px",
+        "backgroundColor": "primary.teal",
+        "borderRadius": "md",
+        "margin": "md",
+        "typography": {
+          "fontSize": "base",
+          "fontWeight": "semibold",
+          "color": "white"
+        },
+        "states": {
+          "pressed": {
+            "backgroundColor": "primary.teal",
+            "opacity": 0.8
+          }
+        }
+      },
+
+      "secondaryButton": {
+        "height": "48px",
+        "backgroundColor": "transparent",
+        "border": "1px solid primary.blue",
+        "borderRadius": "md",
+        "typography": {
+          "fontSize": "base",
+          "fontWeight": "medium",
+          "color": "primary.blue"
+        }
+      },
+
+      "bottomNavigation": {
+        "height": "80px",
+        "backgroundColor": "background.primary",
+        "borderTop": "1px solid background.secondary",
+        "layout": "horizontal",
+        "justifyContent": "space-around",
+        "paddingTop": "sm",
+        "item": {
+          "layout": "vertical",
+          "alignItems": "center",
+          "icon": {
+            "size": "24px",
+            "marginBottom": "xs"
+          },
+          "label": {
+            "typography": "caption"
+          },
+          "states": {
+            "active": {
+              "color": "primary.purple"
+            },
+            "inactive": {
+              "color": "text.muted"
+            }
+          }
+        }
+      },
+
+      "couponBanner": {
+        "layout": "horizontal",
+        "backgroundColor": "primary.blue",
+        "borderRadius": "md",
+        "padding": "sm md",
+        "margin": "md",
+        "alignItems": "center",
+        "icon": {
+          "size": "20px",
+          "color": "white",
+          "marginRight": "sm"
+        },
+        "text": {
+          "typography": "caption",
+          "color": "white",
+          "flex": 1
+        },
+        "button": {
+          "typography": "caption",
+          "color": "primary.blue",
+          "backgroundColor": "white",
+          "borderRadius": "sm",
+          "padding": "xs sm"
+        }
+      },
+
+      "rewardsBanner": {
+        "layout": "horizontal",
+        "backgroundColor": "warning",
+        "borderRadius": "md",
+        "padding": "sm md",
+        "margin": "md",
+        "alignItems": "center",
+        "icon": {
+          "size": "20px",
+          "marginRight": "sm"
+        },
+        "text": {
+          "typography": "caption",
+          "flex": 1
+        }
+      }
+    },
+
+    "layouts": {
+      "screen": {
+        "backgroundColor": "background.primary",
+        "safeArea": true,
+        "sections": ["statusBar", "header", "content", "bottomNavigation"]
+      },
+      
+      "scrollableContent": {
+        "flex": 1,
+        "paddingBottom": "2xl"
+      },
+
+      "cardGrid": {
+        "layout": "grid",
+        "padding": "md",
+        "gap": "md"
+      },
+
+      "listView": {
+        "layout": "vertical",
+        "gap": "xs"
+      }
+    },
+
+    "patterns": {
+      "medicalRecordsList": {
+        "components": ["sectionHeader", "listItem"],
+        "grouping": "byUploader",
+        "actions": ["view", "delete"]
+      },
+      
+      "doctorBooking": {
+        "flow": ["search", "selectDoctor", "chooseTime", "confirmPayment"],
+        "components": ["doctorCard", "appointmentDetails", "billingSection"]
+      },
+      
+      "healthIssuesGrid": {
+        "layout": "iconGrid",
+        "categories": "common conditions",
+        "interaction": "tap to view details"
+      }
+    },
+
+    "interactions": {
+      "tapFeedback": {
+        "scale": 0.95,
+        "duration": "150ms"
+      },
+      "cardPress": {
+        "elevation": "lg",
+        "duration": "200ms"
+      },
+      "buttonPress": {
+        "opacity": 0.8,
+        "duration": "100ms"
+      }
+    },
+
+    "accessibility": {
+      "minimumTouchTarget": "44px",
+      "colorContrast": "WCAG AA",
+      "semanticLabels": true,
+      "screenReaderSupport": true
+    }
+  }
+}

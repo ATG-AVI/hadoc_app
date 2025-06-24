@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hadoc_app/models/user_model.dart';
+import 'package:hadoc_app/services/supabase_service.dart';
 
 class UserProvider extends ChangeNotifier {
   static const String _userKey = 'user_data';
@@ -91,6 +92,7 @@ class UserProvider extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
+      await SupabaseService.instance.signOut();
       _user = null;
       await _saveUserToStorage();
       _error = null;
@@ -103,8 +105,144 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> signIn({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      print('DEBUG: UserProvider signIn called');
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
+      print('DEBUG: Calling SupabaseService.signIn');
+      final user = await SupabaseService.instance.signIn(
+        email: email,
+        password: password,
+      );
+
+      print('DEBUG: SupabaseService.signIn returned: ${user != null}');
+      if (user != null) {
+        print('DEBUG: Setting user in provider');
+        await setUser(user);
+        return true;
+      } else {
+        print('DEBUG: No user returned, setting error');
+        _error = 'Invalid credentials';
+        return false;
+      }
+    } on ProfileIncompleteException catch (e) {
+      print('DEBUG: ProfileIncompleteException caught in UserProvider: $e');
+      // Let ProfileIncompleteException bubble up to the UI
+      rethrow;
+    } catch (e) {
+      print('DEBUG: Other exception caught in UserProvider: $e');
+      print('DEBUG: Exception type: ${e.runtimeType}');
+      _error = e.toString();
+      return false;
+    } finally {
+      print('DEBUG: UserProvider signIn finally block');
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> signUp({
+    required String email,
+    required String password,
+    required String name,
+    required String role,
+    required int age,
+    required String gender,
+    required String phoneNumber,
+    required String address,
+    String? licenseNumber,
+    String? specialization,
+  }) async {
+    try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
+      final user = await SupabaseService.instance.signUp(
+        email: email,
+        password: password,
+        name: name,
+        role: role,
+        age: age,
+        gender: gender,
+        phoneNumber: phoneNumber,
+        address: address,
+        licenseNumber: licenseNumber,
+        specialization: specialization,
+      );
+
+      if (user != null) {
+        await setUser(user);
+        return true;
+      } else {
+        _error = 'Failed to create account';
+        return false;
+      }
+    } catch (e) {
+      _error = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   void clearError() {
     _error = null;
     notifyListeners();
+  }
+
+  Future<bool> updateUserProfile({
+    required String name,
+    required int age,
+    required String gender,
+    required String phoneNumber,
+    required String address,
+    String? licenseNumber,
+    String? specialization,
+  }) async {
+    try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
+      // Get current user from Supabase auth
+      final currentUser = SupabaseService.instance.client.auth.currentUser;
+      if (currentUser == null) {
+        _error = 'No authenticated user found';
+        return false;
+      }
+
+      final user = await SupabaseService.instance.updateUserProfile(
+        userId: currentUser.id,
+        name: name,
+        age: age,
+        gender: gender,
+        phoneNumber: phoneNumber,
+        address: address,
+        licenseNumber: licenseNumber,
+        specialization: specialization,
+      );
+
+      if (user != null) {
+        await setUser(user);
+        return true;
+      } else {
+        _error = 'Failed to update profile';
+        return false;
+      }
+    } catch (e) {
+      _error = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 } 

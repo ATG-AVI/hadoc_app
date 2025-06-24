@@ -1,0 +1,108 @@
+import pandas as pd
+import numpy as np
+import glob as gb
+import cv2
+import numpy as np
+import argparse
+import torch
+import locale
+import os
+import seaborn as sns
+sns.set(style="whitegrid")
+import tensorflow as tf
+import keras
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import BatchNormalization
+from tensorflow.keras.layers import Conv2D
+from tensorflow.keras.layers import MaxPooling2D
+from tensorflow.keras.layers import Activation
+from tensorflow.keras.layers import Dropout
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import Input
+from tensorflow.keras.models import Model
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelBinarizer
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.layers import concatenate
+
+def create_mlp(shape):
+    model = Sequential()
+    model.add(Dense(8, input_dim=shape, activation="relu"))
+    model.add(Dense(2, activation="relu"))
+    return model
+
+
+def create_cnn1( height,width, depth):
+    model_cnn = keras.models.Sequential([
+            keras.layers.Conv2D(128,kernel_size=(3,3),activation='relu',input_shape=(height,width,3)),
+            keras.layers.Conv2D(64,kernel_size=(3,3),activation='relu'),
+            keras.layers.MaxPool2D(4,4),
+            keras.layers.Conv2D(120,kernel_size=(3,3),activation='relu'),
+            keras.layers.Conv2D(80,kernel_size=(3,3),activation='relu'), 
+            keras.layers.Conv2D(50,kernel_size=(3,3),activation='relu'),
+            keras.layers.MaxPool2D(4,4),
+            keras.layers.Flatten(),  
+            keras.layers.Dense(32,activation='relu') ,  
+            keras.layers.Dense(16,activation='relu') , 
+            keras.layers.Dense(8,activation='relu') ,       
+            keras.layers.Dropout(rate=0.5) , 
+            keras.layers.Dense(2,activation='softmax'), 
+        ])
+    return model_cnn
+
+# numerical data
+df=pd.read_csv('C:/Users/Ayush/Desktop/New folder/MultiModal_Data_AakashModified.csv',header=0)
+
+#image data
+# trainpath=r'C:/Users/Ayush/Desktop/image/200 images/'
+trainpath = r'C:/Users/Ayush/Desktop/ECG_IMAGES/'
+
+s = 100
+images = []
+y_train = []
+
+# gray scale images
+for folder in  os.listdir(trainpath) : 
+    files = gb.glob(pathname= str( trainpath  + folder + '/*.png'))
+    for file in files: 
+        image = cv2.imread(file)
+        image_array = cv2.resize(image , (s,s))
+        images.append(list(image_array))
+images=np.array(images)
+
+split = train_test_split(df, images, test_size=0.20, random_state=42)
+(trainAttrX, testAttrX, trainImagesX, testImagesX) = split
+trainY = trainAttrX["target"] 
+testY = testAttrX["target"]
+
+trainAttrX= trainAttrX.drop(columns=['target'])
+trainAttrX= trainAttrX.drop(columns=['ecg'])
+testAttrX=testAttrX.drop(columns=['target'])
+testAttrX=testAttrX.drop(columns=['ecg'])
+
+mlp = create_mlp1(trainAttrX.shape[1])
+cnn = create_cnn1(100, 100, 3)
+
+combinedInput = concatenate([mlp.output, cnn.output])
+
+x = Dense(64, activation="relu")(combinedInput)
+x = Dense(32, activation="relu")(x)
+x = Dense(8, activation="sigmoid")(x)
+x = Dense(2, activation="linear")(x)
+
+
+model = Model(inputs=[mlp.input, cnn.input], outputs=x)
+opt = Adam(learning_rate=1e-3, decay=1e-3 / 200)
+
+
+model.compile(optimizer ='adam',loss='sparse_categorical_crossentropy',metrics=['accuracy'])
+
+print("[INFO] training model...")
+model.fit(
+    x=[trainAttrX, trainImagesX], y=trainY,
+    validation_data=([testAttrX, testImagesX], testY),
+    epochs=30)

@@ -1,0 +1,108 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+import seaborn as sns
+sns.set(style="whitegrid")
+import os
+import glob as gb
+import cv2
+import tensorflow as tf
+import keras
+
+testpath = r'C:/Users/Ayush/Desktop/ECG_Image_data2/test/'
+trainpath = r'C:/Users/Ayush/Desktop/ECG_Image_data2/train/'
+
+code = {'N': 0, 'F': 1, 'V': 2, 'S': 3, 'Q': 4, 'M':5}
+
+def getcode(n) : 
+    for x , y in code.items() : 
+        if n == y : 
+            return x    
+
+for folder in  os.listdir(trainpath ) : 
+    filess = gb.glob(pathname= str( trainpath  + folder + '/*.png'))
+    print(f'For training data , found {len(filess)} in folder {folder}')
+
+for folder in  os.listdir(testpath ) : #go on seg_test path
+    filess = gb.glob(pathname= str( testpath  + folder + '/*.png'))
+    print(f'For testing data , found {len(filess)} in folder {folder}')
+
+size = []
+for folder in  os.listdir(trainpath ) : 
+    files = gb.glob(pathname= str( trainpath  + folder + '/*.png'))#go on seg_train path
+    for file in files: 
+        image = plt.imread(file)
+        size.append(image.shape)
+pd.Series(size).value_counts()
+
+size = []
+for folder in  os.listdir(testpath ) : 
+    files = gb.glob(pathname= str( testpath  + folder + '/*.png'))
+    for file in files: 
+        image = plt.imread(file)
+        size.append(image.shape)
+pd.Series(size).value_counts()
+
+s = 100
+X_train = []
+y_train = []
+for folder in  os.listdir(trainpath) : 
+    files = gb.glob(pathname= str( trainpath  + folder + '/*.png'))
+    for file in files: 
+        image = cv2.imread(file)
+        image_array = cv2.resize(image , (s,s))#resize all images to 100*100
+        X_train.append(list(image_array))
+        y_train.append(code[folder])
+
+print(f' {len(X_train)} items in X_train')
+print(f' {len(y_train)} items in Y_train')
+
+X_test = []
+y_test = []
+for folder in  os.listdir(testpath) : 
+    files = gb.glob(pathname= str( testpath  + folder + '/*.png'))
+    for file in files: 
+        image = cv2.imread(file)
+        image_array = cv2.resize(image , (s,s))
+        X_test.append(list(image_array))
+        y_test.append(code[folder])
+
+X_train = np.array(X_train)
+X_test = np.array(X_test)
+y_train = np.array(y_train)
+y_test = np.array(y_test)
+
+print(f'X_train shape  is {X_train.shape}')
+print(f'X_test shape  is {X_test.shape}')
+print(f'y_train shape  is {y_train.shape}')
+print(f'y_test shape  is {y_test.shape}')
+
+Model = keras.models.Sequential([
+        keras.layers.Conv2D(200,kernel_size=(3,3),activation='relu',input_shape=(s,s,3)),
+        
+        keras.layers.Conv2D(150,kernel_size=(3,3),activation='relu'),
+       
+        keras.layers.MaxPool2D(4,4),
+        
+        keras.layers.Conv2D(120,kernel_size=(3,3),activation='relu'),
+        
+        keras.layers.Conv2D(80,kernel_size=(3,3),activation='relu'), 
+        
+        keras.layers.Conv2D(50,kernel_size=(3,3),activation='relu'),
+        
+        keras.layers.MaxPool2D(4,4),
+        keras.layers.Flatten(),  
+        keras.layers.Dense(120,activation='relu') ,  
+        keras.layers.Dense(100,activation='relu') , 
+        keras.layers.Dense(50,activation='relu') ,       
+        keras.layers.Dropout(rate=0.5) , 
+        keras.layers.Dense(6,activation='softmax'), 
+    ])
+
+Model.compile(optimizer ='adam',loss='sparse_categorical_crossentropy',metrics=['accuracy'])
+
+
+history = Model.fit(X_train, y_train, epochs=10,batch_size=64,verbose=1)#traning
+
+

@@ -1039,49 +1039,137 @@ class _PatientDashboardState extends State<PatientDashboard>
   }
 
   Widget _buildChatScreen() {
-    if (_doctors.isEmpty) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.chat_outlined, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
-            Text(
-              'No doctors available',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Chat with Doctors'),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadData,
+          ),
+        ],
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppTheme.primaryTeal, AppTheme.primaryBlue],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            SizedBox(height: 8),
-            Text(
-              'Doctors will appear here when available',
-              style: TextStyle(color: Colors.grey),
-            ),
-          ],
+          ),
         ),
-      );
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _doctors.length,
-      itemBuilder: (context, index) {
-        final doctor = _doctors[index];
-        return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: AppTheme.primaryTeal,
-              child: Text(
-                doctor.name.isNotEmpty ? doctor.name[0].toUpperCase() : 'D',
-                style: const TextStyle(color: Colors.white),
+      ),
+      body: _doctors.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.chat_outlined,
+                    size: 64,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No doctors available',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Doctors will appear here when available',
+                    style: TextStyle(
+                      color: Colors.grey[500],
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: _loadData,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: _doctors.length,
+                itemBuilder: (context, index) {
+                  final doctor = _doctors[index];
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(12),
+                      leading: CircleAvatar(
+                        radius: 24,
+                        backgroundColor: AppTheme.primaryTeal.withOpacity(0.1),
+                        child: Text(
+                          doctor.name.isNotEmpty ? doctor.name[0].toUpperCase() : 'D',
+                          style: const TextStyle(
+                            color: AppTheme.primaryTeal,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      title: Text(
+                        'Dr. ${doctor.name}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 4),
+                          Text(
+                            doctor.specialization ?? 'General Practice',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              const Icon(Icons.star, color: Colors.amber, size: 16),
+                              const SizedBox(width: 4),
+                              Text(
+                                '4.8 • Available',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      trailing: Container(
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryTeal.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.all(8),
+                        child: const Icon(
+                          Icons.chat_outlined,
+                          color: AppTheme.primaryTeal,
+                          size: 20,
+                        ),
+                      ),
+                      onTap: () => _startChat(doctor),
+                    ),
+                  );
+                },
               ),
             ),
-            title: Text('Dr. ${doctor.name}'),
-            subtitle: Text(doctor.specialization ?? 'General Practice'),
-            trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () => _startChat(doctor),
-          ),
-        );
-      },
     );
   }
 

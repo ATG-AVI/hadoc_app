@@ -7,6 +7,7 @@ import '../../models/analysis_result.dart';
 
 import '../../screens/patient/file_upload_screen.dart';
 import '../../screens/chat/chat_screen.dart';
+import '../../screens/profile/edit_profile_screen.dart';
 import '../../utils/theme.dart';
 
 class PatientDashboard extends StatefulWidget {
@@ -1542,7 +1543,15 @@ class _PatientDashboardState extends State<PatientDashboard>
                             width: double.infinity,
                             child: ElevatedButton.icon(
                               onPressed: () {
-                                // Navigate to edit profile
+                                final user = context.read<UserProvider>().user;
+                                if (user != null) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditProfileScreen(profile: user),
+                                    ),
+                                  );
+                                }
                               },
                               icon: const Icon(Icons.edit, size: 18),
                               label: const Text('Edit Profile'),
@@ -1585,7 +1594,15 @@ class _PatientDashboardState extends State<PatientDashboard>
                           Expanded(
                             child: ElevatedButton.icon(
                               onPressed: () {
-                                // Navigate to edit profile
+                                final user = context.read<UserProvider>().user;
+                                if (user != null) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditProfileScreen(profile: user),
+                                    ),
+                                  );
+                                }
                               },
                               icon: const Icon(Icons.edit, size: 18),
                               label: const Text('Edit Profile'),

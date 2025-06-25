@@ -65,22 +65,29 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<void> updateUser(UserModel updatedUser) async {
-    if (_user == null) {
-      _error = 'No user logged in';
-      notifyListeners();
-      return;
-    }
-
     try {
       _isLoading = true;
+      _error = null;
       notifyListeners();
 
-      _user = updatedUser;
-      await _saveUserToStorage();
-      _error = null;
+      final success = await updateUserProfile(
+        name: updatedUser.name,
+        age: updatedUser.age,
+        gender: updatedUser.gender,
+        phoneNumber: updatedUser.phoneNumber,
+        address: updatedUser.address,
+        licenseNumber: updatedUser.licenseNumber,
+        specialization: updatedUser.specialization,
+      );
+
+      if (success) {
+        _user = updatedUser;
+      } else {
+        throw Exception('Failed to update user profile');
+      }
     } catch (e) {
-      _error = 'Failed to update user';
-      debugPrint('Error updating user: $e');
+      _error = e.toString();
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();

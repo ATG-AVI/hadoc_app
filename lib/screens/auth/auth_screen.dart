@@ -208,7 +208,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         const SizedBox(height: AppTheme.spacingSM),
                         _buildFeatureItem(Icons.upload_file, 'Upload medical documents'),
                         _buildFeatureItem(Icons.analytics, 'AI-powered analysis'),
-                        _buildFeatureItem(Icons.chat, 'Chat with healthcare professionals'),
+                        _buildFeatureItem(Icons.chat, 'Chat with healthcare \nprofessionals'),
                         _buildFeatureItem(Icons.security, 'Secure & private'),
                       ],
                     ),

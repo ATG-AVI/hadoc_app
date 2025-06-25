@@ -1427,7 +1427,7 @@ class _PatientDashboardState extends State<PatientDashboard>
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 2),  
                 
                 // Health Stats Grid
                 LayoutBuilder(

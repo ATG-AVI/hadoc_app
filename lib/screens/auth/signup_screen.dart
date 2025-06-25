@@ -46,7 +46,7 @@ class _SignupScreenState extends State<SignupScreen> {
           if (response.user != null) {
             // Navigate to user details screen
             Navigator.pushReplacement(
-              context,
+            context,
               MaterialPageRoute(
                 builder: (context) => UserDetailsScreen(
                   email: _emailController.text.trim(),
@@ -60,7 +60,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 content: Text('Signup failed. Please try again.'),
                 backgroundColor: Colors.red,
               ),
-            );
+          );
           }
         }
       } catch (e) {
@@ -117,12 +117,12 @@ class _SignupScreenState extends State<SignupScreen> {
                       Text(
                         'Creating ${widget.selectedRole} account',
                         style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
                     ],
-                  ),
+                      ),
                 ),
                 
                 const SizedBox(height: 32),

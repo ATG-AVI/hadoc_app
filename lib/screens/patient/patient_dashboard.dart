@@ -81,7 +81,7 @@ class _PatientDashboardState extends State<PatientDashboard>
   }
 
   Future<void> _loadData() async {
-    setState(() {
+      setState(() {
       _isLoading = true;
     });
 
@@ -101,7 +101,7 @@ class _PatientDashboardState extends State<PatientDashboard>
         _showSnackBar('Error loading data: $e', Colors.red);
       }
     } finally {
-      setState(() {
+    setState(() {
         _isLoading = false;
       });
     }
@@ -435,10 +435,10 @@ class _PatientDashboardState extends State<PatientDashboard>
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
-        children: [
+                children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -454,7 +454,7 @@ class _PatientDashboardState extends State<PatientDashboard>
             ],
           ),
           const SizedBox(height: 12),
-          Text(
+                  Text(
             title,
             style: TextStyle(
               color: Colors.grey[600],
@@ -504,8 +504,8 @@ class _PatientDashboardState extends State<PatientDashboard>
               fontSize: 20,
               fontWeight: FontWeight.w700,
             ),
-          ),
-          const SizedBox(height: 16),
+                  ),
+                  const SizedBox(height: 16),
                      LayoutBuilder(
              builder: (context, constraints) {
                if (constraints.maxWidth > 600) {
@@ -570,11 +570,11 @@ class _PatientDashboardState extends State<PatientDashboard>
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(icon, color: color, size: 20),
             ),
@@ -677,9 +677,9 @@ class _PatientDashboardState extends State<PatientDashboard>
             color: Colors.grey[50],
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: Colors.grey[200]!),
-          ),
-          child: Row(
-            children: [
+                      ),
+                      child: Row(
+                        children: [
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -777,8 +777,8 @@ class _PatientDashboardState extends State<PatientDashboard>
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Text(
+                          Expanded(
+                            child: Text(
                       analysis.fileName,
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
@@ -801,10 +801,10 @@ class _PatientDashboardState extends State<PatientDashboard>
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
-                    ),
-                  ),
-                ],
-              ),
+                            ),
+                          ),
+                        ],
+                      ),
               const SizedBox(height: 8),
               Text(
                 analysis.analysisResult.length > 100 
@@ -960,7 +960,7 @@ class _PatientDashboardState extends State<PatientDashboard>
               Text('Confidence: ${(analysis.confidenceScore * 100).toInt()}%'),
               const SizedBox(height: 8),
               Text('Date: ${_formatDate(analysis.createdAt)}'),
-              const SizedBox(height: 16),
+                    const SizedBox(height: 16),
               const Text('Analysis Result:', style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Text(analysis.analysisResult),
@@ -998,7 +998,7 @@ class _PatientDashboardState extends State<PatientDashboard>
               'Select a Doctor',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
+                    const SizedBox(height: 16),
             ...(_doctors.map((doctor) => ListTile(
               leading: CircleAvatar(
                 backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.1),
@@ -1088,109 +1088,639 @@ class _PatientDashboardState extends State<PatientDashboard>
     final user = context.watch<UserProvider>().user;
     
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundColor: AppTheme.primaryTeal,
-                  child: Text(
-                    user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'P',
-                    style: const TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+          // Enhanced Profile Header
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppTheme.primaryTeal, AppTheme.primaryBlue],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'My Profile',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            // Settings
+                          },
+                          icon: const Icon(Icons.settings, color: Colors.white),
+                        ),
+                      ],
                     ),
-                  ),
+                    const SizedBox(height: 24),
+                    
+                    // Profile Avatar and Basic Info
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxWidth < 350) {
+                          // Narrow layout: Stack vertically
+                          return Column(
+                            children: [
+                              Stack(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 35,
+                                    backgroundColor: Colors.white.withValues(alpha: 0.2),
+                                    child: Text(
+                                      user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'P',
+                                      style: const TextStyle(
+                                        fontSize: 28,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(3),
+                                      decoration: const BoxDecoration(
+                                        color: Colors.green,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.verified,
+                                        color: Colors.white,
+                                        size: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              Column(
+                                children: [
+                                  Text(
+                                    user?.name ?? 'Patient',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    user?.email ?? '',
+                                    style: TextStyle(
+                                      color: Colors.white.withValues(alpha: 0.8),
+                                      fontSize: 12,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.2),
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.health_and_safety, color: Colors.white, size: 12),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          'Verified',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        } else {
+                          // Wide layout: Side by side
+                          return Row(
+                            children: [
+                              Stack(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 40,
+                                    backgroundColor: Colors.white.withValues(alpha: 0.2),
+                                    child: Text(
+                                      user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'P',
+                                      style: const TextStyle(
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: const BoxDecoration(
+                                        color: Colors.green,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.verified,
+                                        color: Colors.white,
+                                        size: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 20),
+                              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                                      user?.name ?? 'Patient',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      user?.email ?? '',
+                                      style: TextStyle(
+                                        color: Colors.white.withValues(alpha: 0.8),
+                                        fontSize: 14,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 8),
+                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(alpha: 0.2),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.health_and_safety, color: Colors.white, size: 14),
+                                          const SizedBox(width: 4),
+                                          Flexible(
+                                            child: Text(
+                                              'Verified Patient',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                      },
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  user?.name ?? 'Patient',
-                  style: const TextStyle(
-                    fontSize: 24,
+              ),
+            ),
+          ),
+          
+          // Health Dashboard Cards
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Health Dashboard',
+                  style: TextStyle(
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
-                  user?.email ?? '',
+                const SizedBox(height: 16),
+                
+                // Health Stats Grid
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final crossAxisCount = constraints.maxWidth > 500 ? 4 : 2;
+                    final childAspectRatio = constraints.maxWidth > 500 ? 1.1 : 1.4;
+                    
+                    return GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: childAspectRatio,
+                      children: [
+                        _buildDashboardCard(
+                          'Total ECG Analyses',
+                          '${_recentAnalyses.length}',
+                          Icons.analytics,
+                          Colors.blue,
+                          'This month',
+                        ),
+                        _buildDashboardCard(
+                          'Health Score',
+                          '92/100',
+                          Icons.favorite,
+                          Colors.green,
+                          'Excellent',
+                        ),
+                        _buildDashboardCard(
+                          'Consultations',
+                          '${_doctors.length}',
+                          Icons.medical_services,
+                          Colors.purple,
+                          'Available doctors',
+                        ),
+                        _buildDashboardCard(
+                          'Risk Level',
+                          'Low',
+                          Icons.security,
+                          Colors.orange,
+                          'Based on analysis',
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                
+                const SizedBox(height: 24),
+                
+                // Recent Activity
+                const Text(
+                  'Recent Activity',
                   style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+                const SizedBox(height: 16),
+                
+                ...(_recentAnalyses.take(3).map((analysis) => Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withValues(alpha: 0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                      ),
+                      child: Row(
+                        children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: _getConfidenceColor(analysis.confidenceScore).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.analytics,
+                          color: _getConfidenceColor(analysis.confidenceScore),
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                          Text(
+                              'ECG Analysis',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              analysis.fileName,
+                            style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 12,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: _getConfidenceColor(analysis.confidenceScore).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              '${(analysis.confidenceScore * 100).toInt()}%',
+                              style: TextStyle(
+                                color: _getConfidenceColor(analysis.confidenceScore),
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            _formatDate(analysis.createdAt),
+                            style: TextStyle(
+                              color: Colors.grey[500],
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ))),
+                
+                if (_recentAnalyses.isEmpty)
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey[200]!),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(Icons.analytics_outlined, size: 48, color: Colors.grey[400]),
+                        const SizedBox(height: 12),
+                        Text(
+                          'No ECG analyses yet',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Upload your first ECG to get started',
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                
+                const SizedBox(height: 24),
+                
+                // Personal Information
+                _buildProfileSection('Personal Information', [
+                  _buildProfileItem('Age', '${user?.age ?? 'Not set'} years'),
+                  _buildProfileItem('Gender', user?.gender?.capitalize() ?? 'Not set'),
+                  _buildProfileItem('Phone', user?.phoneNumber ?? 'Not set'),
+                  _buildProfileItem('Address', user?.address ?? 'Not set'),
+                ]),
+                
+                const SizedBox(height: 24),
+                
+                // Medical Information
+                _buildProfileSection('Medical Information', [
+                  _buildProfileItem('Blood Type', 'O+ (Update needed)'),
+                  _buildProfileItem('Allergies', 'None reported'),
+                  _buildProfileItem('Emergency Contact', user?.phoneNumber ?? 'Not set'),
+                  _buildProfileItem('Primary Doctor', _doctors.isNotEmpty ? 'Dr. ${_doctors.first.name}' : 'Not assigned'),
+                ]),
+                
+                const SizedBox(height: 32),
+                
+                // Action Buttons
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (constraints.maxWidth < 400) {
+                      // Narrow layout: Stack vertically
+                      return Column(
+                        children: [
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                // Navigate to edit profile
+                              },
+                              icon: const Icon(Icons.edit, size: 18),
+                              label: const Text('Edit Profile'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.primaryTeal,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.all(14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton.icon(
+                              onPressed: () {
+                                // Export health data
+                                _showSnackBar('Health data export feature coming soon!', Colors.blue);
+                              },
+                              icon: const Icon(Icons.download, size: 18),
+                              label: const Text('Export Data'),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: AppTheme.primaryTeal,
+                                side: BorderSide(color: AppTheme.primaryTeal),
+                                padding: const EdgeInsets.all(14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      // Wide layout: Side by side
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                // Navigate to edit profile
+                              },
+                              icon: const Icon(Icons.edit, size: 18),
+                              label: const Text('Edit Profile'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.primaryTeal,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.all(16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () {
+                                // Export health data
+                                _showSnackBar('Health data export feature coming soon!', Colors.blue);
+                              },
+                              icon: const Icon(Icons.download, size: 18),
+                              label: const Text('Export Data'),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: AppTheme.primaryTeal,
+                                side: BorderSide(color: AppTheme.primaryTeal),
+                                padding: const EdgeInsets.all(16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                ),
+                
+                const SizedBox(height: 16),
+                
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      context.read<UserProvider>().logout();
+                      Navigator.pushReplacementNamed(context, '/auth');
+                    },
+                    icon: const Icon(Icons.logout, size: 18),
+                    label: const Text('Sign Out'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.red,
+                      side: const BorderSide(color: Colors.red),
+                      padding: const EdgeInsets.all(16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 24),
               ],
-            ),
-          ),
-          const SizedBox(height: 32),
-          
-          // Profile Information
-          _buildProfileSection('Personal Information', [
-            _buildProfileItem('Age', '${user?.age ?? 'Not set'} years'),
-            _buildProfileItem('Gender', user?.gender?.capitalize() ?? 'Not set'),
-            _buildProfileItem('Phone', user?.phoneNumber ?? 'Not set'),
-            _buildProfileItem('Address', user?.address ?? 'Not set'),
-          ]),
-          
-          const SizedBox(height: 24),
-          
-          // Health Summary
-          _buildProfileSection('Health Summary', [
-            _buildProfileItem('Total Analyses', '${_recentAnalyses.length}'),
-            _buildProfileItem('Last Analysis', _recentAnalyses.isNotEmpty 
-                ? _formatDate(_recentAnalyses.first.createdAt) 
-                : 'Never'),
-            _buildProfileItem('Health Status', 'Good'),
-            _buildProfileItem('Risk Level', 'Low'),
-          ]),
-          
-          const SizedBox(height: 32),
-          
-          // Action Buttons
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                // Navigate to edit profile
-              },
-              icon: const Icon(Icons.edit),
-              label: const Text('Edit Profile'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryTeal,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.all(16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ),
-          
-          const SizedBox(height: 16),
-          
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () {
-                context.read<UserProvider>().logout();
-                Navigator.pushReplacementNamed(context, '/auth');
-              },
-              icon: const Icon(Icons.logout),
-              label: const Text('Sign Out'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red,
-                padding: const EdgeInsets.all(16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDashboardCard(String title, String value, IconData icon, Color color, String subtitle) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Icon(icon, color: color, size: 16),
+              ),
+              Icon(Icons.trending_up, color: Colors.green, size: 12),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Flexible(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text(
+            subtitle,
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 9,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
     );
   }
 

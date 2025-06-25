@@ -124,34 +124,34 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
           children: [
             // Welcome Card
             Card(
-              child: Padding(
+                  child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
                       'Welcome, Dr. ${user?.name ?? 'Doctor'}!',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             color: AppTheme.primaryColor,
                             fontWeight: FontWeight.bold,
                           ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
                       'Review patient analyses and communicate with your patients.',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Colors.grey[600],
                           ),
-                    ),
+                        ),
                     if (user?.specialization != null) ...[
-                      const SizedBox(height: 8),
-                      Text(
+                        const SizedBox(height: 8),
+                        Text(
                         'Specialization: ${user!.specialization}',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppTheme.primaryColor,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
+                                color: AppTheme.primaryColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
                     ],
                   ],
                 ),
@@ -164,9 +164,9 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
               'Recent Patient Analyses',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 16),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
             
             if (_isLoading)
               const Center(child: CircularProgressIndicator())
@@ -175,12 +175,12 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                 child: Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
-                    children: [
+                          children: [
                       Icon(
                         Icons.analytics_outlined,
                         size: 48,
                         color: Colors.grey[400],
-                      ),
+                            ),
                       const SizedBox(height: 16),
                       Text(
                         'No patient analyses yet',
@@ -209,23 +209,23 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                         child: const Icon(
                           Icons.analytics,
                           color: Colors.white,
-                        ),
-                      ),
+                    ),
+                  ),
                       title: Text(
                         analysis.fileName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
                             analysis.analysisResult,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
                             'Confidence: ${(analysis.confidenceScore * 100).toInt()}%',
                             style: const TextStyle(
                               color: Colors.green,
@@ -264,9 +264,9 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                         Icons.people_outline,
                         size: 64,
                         color: Colors.grey[400],
-                      ),
+                        ),
                       const SizedBox(height: 16),
-                      Text(
+                        Text(
                         'No patients available',
                         style: TextStyle(
                           fontSize: 18,
@@ -291,13 +291,13 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                            ),
                           ),
+                        ),
                         ),
                         title: Text(
                           patient.name,
                           style: const TextStyle(fontWeight: FontWeight.w600),
-                        ),
+                  ),
                         subtitle: Text('Age: ${patient.age} • ${patient.gender}'),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: () {
@@ -305,12 +305,12 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ChatScreen(otherUser: patient),
-                            ),
+              ),
                           );
                         },
-                      ),
-                    );
-                  },
+          ),
+        );
+      },
                 ),
     );
   }

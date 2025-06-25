@@ -1,8 +1,9 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'dart:io';
+import 'package:path/path.dart' as p;
 import '../models/user_model.dart';
 import '../models/chat_message.dart';
 import '../models/analysis_result.dart';
@@ -249,15 +250,13 @@ class SupabaseService {
   }
 
   // File Upload and Analysis
-  Future<String> uploadFile(PlatformFile file) async {
+  Future<String> uploadFile(XFile file) async {
     try {
-      final bytes = file.bytes ?? await File(file.path!).readAsBytes();
+      final bytes = await file.readAsBytes();
       final fileName = '${DateTime.now().millisecondsSinceEpoch}_${file.name}';
-      
       await client.storage
           .from('medical-files')
           .uploadBinary(fileName, bytes);
-
       return fileName;
     } catch (e) {
       throw Exception('File upload failed: $e');
@@ -271,11 +270,10 @@ class SupabaseService {
   }
 
   Future<AnalysisResult> analyzeFile({
-    required PlatformFile file,
+    required XFile file,
     required String userId,
   }) async {
     try {
-      // Get user data for enhanced analysis
       Map<String, dynamic>? patientData;
       try {
         final userData = await client
@@ -289,18 +287,13 @@ class SupabaseService {
           'role': userData['role'],
         };
       } catch (e) {
-        // Continue without patient data if unavailable
         patientData = null;
       }
-
-      // Use the comprehensive ECG analysis service
       final analysisResult = await ECGAnalysisService.performComprehensiveAnalysis(
         file: file,
         userId: userId,
         patientData: patientData,
       );
-
-      // Store analysis result in database (let database generate the ID)
       final analysisData = {
         'user_id': analysisResult.userId,
         'file_name': analysisResult.fileName,
@@ -309,14 +302,11 @@ class SupabaseService {
         'confidence_score': analysisResult.confidenceScore,
         'created_at': analysisResult.createdAt.toIso8601String(),
       };
-
       final insertedData = await client
           .from('analysis_results')
           .insert(analysisData)
           .select()
           .single();
-
-      // Update the analysis result with the database-generated ID
       return AnalysisResult(
         id: insertedData['id'].toString(),
         userId: analysisResult.userId,
@@ -330,8 +320,6 @@ class SupabaseService {
       throw Exception('Analysis failed: $e');
     }
   }
-
-
 
   // Chat Methods
   Future<List<ChatMessage>> getChatMessages({

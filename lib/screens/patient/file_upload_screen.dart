@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:provider/provider.dart';
 import '../../services/supabase_service.dart';
 import '../../providers/user_provider.dart';
@@ -7,6 +7,7 @@ import '../../models/analysis_result.dart';
 import '../../models/user_model.dart';
 import '../../screens/chat/chat_screen.dart';
 import '../../utils/theme.dart';
+import 'package:path/path.dart' as p;
 
 class FileUploadScreen extends StatefulWidget {
   const FileUploadScreen({super.key});
@@ -19,7 +20,7 @@ class _FileUploadScreenState extends State<FileUploadScreen>
     with TickerProviderStateMixin {
   bool _isUploading = false;
   bool _isAnalyzing = false;
-  PlatformFile? _selectedFile;
+  XFile? _selectedFile;
   AnalysisResult? _analysisResult;
   late AnimationController _uploadAnimationController;
   late AnimationController _progressAnimationController;
@@ -54,15 +55,19 @@ class _FileUploadScreenState extends State<FileUploadScreen>
 
   Future<void> _pickFile() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
-        allowMultiple: false,
+      final XTypeGroup typeGroup = XTypeGroup(
+        label: 'ECG Files',
+        extensions: ['pdf', 'jpg', 'jpeg', 'png'],
+        uniformTypeIdentifiers: [
+          'com.adobe.pdf', // PDF
+          'public.jpeg',   // JPEG/JPG
+          'public.png',    // PNG
+        ],
       );
-
-      if (result != null && result.files.isNotEmpty) {
+      final XFile? file = await openFile(acceptedTypeGroups: [typeGroup]);
+      if (file != null) {
         setState(() {
-          _selectedFile = result.files.first;
+          _selectedFile = file;
           _analysisResult = null;
         });
         _uploadAnimationController.forward();
@@ -532,29 +537,50 @@ class _FileUploadScreenState extends State<FileUploadScreen>
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Icon(Icons.storage, size: 14, color: Colors.grey[600]),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${(_selectedFile!.size / 1024).toStringAsFixed(1)} KB',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Icon(Icons.file_copy, size: 14, color: Colors.grey[600]),
-                            const SizedBox(width: 4),
-                            Text(
-                              _selectedFile!.extension?.toUpperCase() ?? 'FILE',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                        FutureBuilder(
+                          future: _selectedFile!.length(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                              final sizeKB = (snapshot.data! / 1024).toStringAsFixed(1);
+                              return Row(
+                                children: [
+                                  Icon(Icons.storage, size: 14, color: Colors.grey[600]),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '$sizeKB KB',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+                            return Row(
+                              children: [
+                                Icon(Icons.storage, size: 14, color: Colors.grey[600]),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '...',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        const SizedBox(width: 16),
+                        Icon(Icons.file_copy, size: 14, color: Colors.grey[600]),
+                        const SizedBox(width: 4),
+                        Text(
+                          _getFileExtension() ?? 'FILE',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ],
                     ),
@@ -587,7 +613,7 @@ class _FileUploadScreenState extends State<FileUploadScreen>
   }
 
   IconData _getFileIcon() {
-    final extension = _selectedFile?.extension?.toLowerCase();
+    final extension = _getFileExtension()?.toLowerCase();
     switch (extension) {
       case 'pdf':
         return Icons.picture_as_pdf_rounded;
@@ -601,7 +627,7 @@ class _FileUploadScreenState extends State<FileUploadScreen>
   }
 
   Color _getFileColor() {
-    final extension = _selectedFile?.extension?.toLowerCase();
+    final extension = _getFileExtension()?.toLowerCase();
     switch (extension) {
       case 'pdf':
         return Colors.red;
@@ -612,6 +638,11 @@ class _FileUploadScreenState extends State<FileUploadScreen>
       default:
         return AppTheme.primaryColor;
     }
+  }
+
+  String? _getFileExtension() {
+    if (_selectedFile == null) return null;
+    return p.extension(_selectedFile!.name).replaceFirst('.', '').toUpperCase();
   }
 
   Widget _buildActionButtons() {

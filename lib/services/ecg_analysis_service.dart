@@ -1,8 +1,9 @@
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:uuid/uuid.dart';
 import '../models/analysis_result.dart';
+import 'package:path/path.dart' as p;
 
 /// ECG Analysis Service that integrates various ML models for medical analysis
 class ECGAnalysisService {
@@ -46,7 +47,7 @@ class ECGAnalysisService {
   }
 
   /// Analyzes ECG images using 2D CNN approach
-  static Future<Map<String, dynamic>> analyze2DCNN(PlatformFile file) async {
+  static Future<Map<String, dynamic>> analyze2DCNN(XFile file) async {
     // Simulate 2D CNN ECG Image Classification
     await Future.delayed(const Duration(seconds: 3));
     
@@ -55,7 +56,7 @@ class ECGAnalysisService {
     final confidence = 0.75 + random.nextDouble() * 0.2; // 75-95% confidence
     
     // Simulate image processing (100x100 resize)
-    final imageFeatures = _extractImageFeatures(file);
+    final imageFeatures = await _extractImageFeatures(file);
     
     return {
       'model_type': '2D CNN Image Classification',
@@ -69,7 +70,7 @@ class ECGAnalysisService {
 
   /// Advanced multimodal fusion analysis combining multiple data types
   static Future<Map<String, dynamic>> analyzeMultimodal({
-    required PlatformFile file,
+    required XFile file,
     Map<String, dynamic>? patientData,
   }) async {
     // Simulate Multimodal Fusion approach
@@ -98,7 +99,7 @@ class ECGAnalysisService {
 
   /// Tensor fusion analysis for advanced multimodal integration
   static Future<Map<String, dynamic>> analyzeTensorFusion({
-    required PlatformFile file,
+    required XFile file,
     Map<String, dynamic>? patientData,
   }) async {
     // Simulate Tensor Fusion approach
@@ -133,7 +134,7 @@ class ECGAnalysisService {
 
   /// Operation-based fusion analysis
   static Future<Map<String, dynamic>> analyzeOperationFusion({
-    required PlatformFile file,
+    required XFile file,
     Map<String, dynamic>? patientData,
   }) async {
     // Simulate Operation-based Fusion
@@ -166,7 +167,7 @@ class ECGAnalysisService {
 
   /// Comprehensive ECG analysis using all available models
   static Future<AnalysisResult> performComprehensiveAnalysis({
-    required PlatformFile file,
+    required XFile file,
     required String userId,
     Map<String, dynamic>? patientData,
   }) async {
@@ -175,9 +176,8 @@ class ECGAnalysisService {
     
     try {
       // Run all analysis models with error handling
-      if (file.extension?.toLowerCase() == 'png' || 
-          file.extension?.toLowerCase() == 'jpg' ||
-          file.extension?.toLowerCase() == 'jpeg') {
+      final ext = p.extension(file.name).toLowerCase();
+      if (ext == '.png' || ext == '.jpg' || ext == '.jpeg') {
         try {
           results['2d_cnn'] = await analyze2DCNN(file);
         } catch (e) {
@@ -204,7 +204,8 @@ class ECGAnalysisService {
       } else {
         // For other file types, simulate 1D analysis
         try {
-          results['1d_cnn'] = await analyze1DCNN(file.bytes ?? Uint8List(0));
+          final bytes = await file.readAsBytes();
+          results['1d_cnn'] = await analyze1DCNN(bytes);
         } catch (e) {
           print('1D CNN analysis failed: $e');
         }
@@ -227,7 +228,7 @@ class ECGAnalysisService {
         id: analysisId,
         userId: userId,
         fileName: file.name,
-        fileType: file.extension ?? 'unknown',
+        fileType: ext.replaceFirst('.', ''),
         analysisResult: _formatDetailedAnalysisResult(overallAssessment, results),
         confidenceScore: overallAssessment['confidence'],
         createdAt: DateTime.now(),
@@ -237,7 +238,7 @@ class ECGAnalysisService {
         id: analysisId,
         userId: userId,
         fileName: file.name,
-        fileType: file.extension ?? 'unknown',
+        fileType: 'unknown',
         analysisResult: 'Analysis failed: $e',
         confidenceScore: 0.0,
         createdAt: DateTime.now(),
@@ -258,13 +259,14 @@ class ECGAnalysisService {
     };
   }
 
-  static Map<String, dynamic> _extractImageFeatures(PlatformFile file) {
+  static Future<Map<String, dynamic>> _extractImageFeatures(XFile file) async {
     final random = Random();
+    final length = await file.length();
     return {
       'image_quality': 0.7 + random.nextDouble() * 0.3,
       'noise_level': random.nextDouble() * 0.3,
       'contrast': 0.6 + random.nextDouble() * 0.4,
-      'resolution': '${file.size} bytes',
+      'resolution': '$length bytes',
       'detected_leads': random.nextInt(12) + 1,
     };
   }
@@ -281,11 +283,11 @@ class ECGAnalysisService {
     };
   }
 
-  static Future<Map<String, dynamic>> _analyzeCNN2D(PlatformFile file) async {
+  static Future<Map<String, dynamic>> _analyzeCNN2D(XFile file) async {
     final random = Random();
     return {
       'confidence': 0.8 + random.nextDouble() * 0.15,
-      'features': _extractImageFeatures(file),
+      'features': await _extractImageFeatures(file),
     };
   }
 
@@ -317,7 +319,7 @@ class ECGAnalysisService {
     return bestCondition;
   }
 
-  static Future<Map<String, dynamic>> _performAdditionFusion(PlatformFile file, Map<String, dynamic>? patientData) async {
+  static Future<Map<String, dynamic>> _performAdditionFusion(XFile file, Map<String, dynamic>? patientData) async {
     final random = Random();
     return {
       'confidence': 0.7 + random.nextDouble() * 0.25,
@@ -326,7 +328,7 @@ class ECGAnalysisService {
     };
   }
 
-  static Future<Map<String, dynamic>> _performConcatenationFusion(PlatformFile file, Map<String, dynamic>? patientData) async {
+  static Future<Map<String, dynamic>> _performConcatenationFusion(XFile file, Map<String, dynamic>? patientData) async {
     final random = Random();
     return {
       'confidence': 0.75 + random.nextDouble() * 0.2,
@@ -335,7 +337,7 @@ class ECGAnalysisService {
     };
   }
 
-  static Future<Map<String, dynamic>> _performAttentionFusion(PlatformFile file, Map<String, dynamic>? patientData) async {
+  static Future<Map<String, dynamic>> _performAttentionFusion(XFile file, Map<String, dynamic>? patientData) async {
     final random = Random();
     return {
       'confidence': 0.8 + random.nextDouble() * 0.15,

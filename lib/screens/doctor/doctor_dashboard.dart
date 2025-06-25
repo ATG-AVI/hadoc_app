@@ -73,8 +73,19 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Doctor Dashboard'),
-        backgroundColor: AppTheme.primaryColor,
+        backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppTheme.primaryTeal, AppTheme.primaryBlue],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         actions: [
           IconButton(
             onPressed: _loadData,

@@ -35,150 +35,196 @@ class ProfileScreen extends StatelessWidget {
             );
           }
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundColor: AppTheme.primaryColor.withAlpha(50),
-                  child: Text(
-                    user.name[0].toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryColor,
+          return Stack(
+            children: [
+              // Gradient Header
+              Container(
+                height: 140,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppTheme.primaryTeal, AppTheme.primaryBlue],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(32),
+                    bottomRight: Radius.circular(32),
+                  ),
+                ),
+              ),
+              // Main Content
+              Column(
+                children: [
+                  const SizedBox(height: 80),
+                  // Overlapping Avatar
+                  Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 16,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        radius: 56,
+                        backgroundColor: Colors.white,
+                        child: Text(
+                          user.name[0].toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 44,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primaryTeal,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  user.name,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  user.role.toUpperCase(),
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                ),
-                const SizedBox(height: 32),
-                _buildInfoTile(
-                  context,
-                  icon: Icons.email_outlined,
-                  title: 'Email',
-                  value: user.email,
-                ),
-                _buildInfoTile(
-                  context,
-                  icon: Icons.calendar_today_outlined,
-                  title: 'Age',
-                  value: '${user.age} years',
-                ),
-                _buildInfoTile(
-                  context,
-                  icon: Icons.person_outline,
-                  title: 'Gender',
-                  value: user.gender,
-                ),
-                _buildInfoTile(
-                  context,
-                  icon: Icons.phone_outlined,
-                  title: 'Phone',
-                  value: user.phoneNumber,
-                ),
-                _buildInfoTile(
-                  context,
-                  icon: Icons.location_on_outlined,
-                  title: 'Address',
-                  value: user.address,
-                ),
-                const SizedBox(height: 32),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(
-                        context,
-                        '/edit-profile',
-                      );
-                    },
-                    child: const Text('Edit Profile'),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    onPressed: () async {
-                      print('DEBUG: Logout button pressed');
-                      await userProvider.logout();
-                      print('DEBUG: Logout completed');
-                      if (context.mounted) {
-                        print('DEBUG: Navigating to auth screen');
-                        Navigator.pushNamedAndRemoveUntil(
-                          context, 
-                          '/auth', 
-                          (route) => false,
-                        );
-                      }
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: AppTheme.errorColor),
-                      foregroundColor: AppTheme.errorColor,
+                  const SizedBox(height: 16),
+                  // Name and Role
+                  Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          user.name,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          user.role.toUpperCase(),
+                          style: const TextStyle(
+                            color: AppTheme.primaryTeal,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ],
                     ),
-                    child: const Text('Logout'),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(height: 28),
+                  // Info Cards
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        children: [
+                          _modernInfoCard(Icons.email_outlined, 'Email', user.email),
+                          _modernInfoCard(Icons.calendar_today_outlined, 'Age', '${user.age} years'),
+                          _modernInfoCard(Icons.person_outline, 'Gender', user.gender),
+                          _modernInfoCard(Icons.phone_outlined, 'Phone', user.phoneNumber),
+                          _modernInfoCard(Icons.location_on_outlined, 'Address', user.address),
+                          const SizedBox(height: 32),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/edit-profile');
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.primaryTeal,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              child: const Text('Edit Profile'),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton(
+                              onPressed: () async {
+                                await userProvider.logout();
+                                if (context.mounted) {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context, '/auth', (route) => false,
+                                  );
+                                }
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(color: AppTheme.errorColor),
+                                foregroundColor: AppTheme.errorColor,
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              child: const Text('Logout'),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           );
         },
       ),
     );
   }
 
-  Widget _buildInfoTile(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required String value,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+  Widget _modernInfoCard(IconData icon, String title, String value) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryTeal.withOpacity(0.08),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withAlpha(50),
-              borderRadius: BorderRadius.circular(8),
+              color: AppTheme.primaryTeal.withOpacity(0.13),
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(
-              icon,
-              color: AppTheme.primaryColor,
-            ),
+            child: Icon(icon, color: AppTheme.primaryTeal, size: 28),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
+                const SizedBox(height: 4),
                 Text(
                   value,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hadoc_app/providers/user_provider.dart';
 import 'package:hadoc_app/screens/auth/auth_screen.dart';
+import 'screens/splash_screen.dart';
 
 import 'package:hadoc_app/screens/doctor/doctor_dashboard.dart';
 import 'package:hadoc_app/screens/patient/patient_dashboard.dart';
@@ -27,24 +28,7 @@ class MyApp extends StatelessWidget {
         title: 'Hadoc',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
-        initialRoute: '/',
         routes: {
-          '/': (context) {
-            final userProvider = context.watch<UserProvider>();
-            if (userProvider.isLoading) {
-              return const Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
-            if (userProvider.user != null) {
-              return userProvider.user!.role == 'patient'
-                  ? const PatientDashboard()
-                  : const DoctorDashboard();
-            }
-            return const AuthScreen();
-          },
           '/auth': (context) => const AuthScreen(),
           '/patient': (context) => const PatientDashboard(),
           '/doctor': (context) => const DoctorDashboard(),
@@ -57,6 +41,7 @@ class MyApp extends StatelessWidget {
             return EditProfileScreen(profile: user);
           },
         },
+        home: SplashScreen(nextScreen: AuthScreen()),
       ),
     );
   }

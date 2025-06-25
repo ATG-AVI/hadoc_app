@@ -313,13 +313,6 @@ class _PatientDashboardState extends State<PatientDashboard>
                       ),
                     ),
                     const Spacer(),
-                    Text(
-                      'Last updated: Today',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        fontSize: 12,
-                      ),
-                    ),
                   ],
                 ),
               ),

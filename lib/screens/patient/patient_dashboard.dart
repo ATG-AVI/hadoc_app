@@ -352,54 +352,61 @@ class _PatientDashboardState extends State<PatientDashboard>
                 },
                 icon: const Icon(Icons.trending_up, size: 16),
                 label: const Text('View Details'),
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
               ),
             ],
           ),
-                     LayoutBuilder(
-             builder: (context, constraints) {
-               final crossAxisCount = constraints.maxWidth > 500 ? 4 : 2;
-               final childAspectRatio = constraints.maxWidth > 500 ? 1.0 : 1.2;
-               
-               return GridView.count(
-                 shrinkWrap: true,
-                 physics: const NeverScrollableScrollPhysics(),
-                 crossAxisCount: crossAxisCount,
-                 crossAxisSpacing: 12,
-                 mainAxisSpacing: 12,
-                 childAspectRatio: childAspectRatio,
-                 children: [
-                   _buildMetricCard(
-                     'Heart Rate',
-                     '${_healthMetrics['heart_rate']['current']} BPM',
-                     Icons.favorite,
-                     Colors.red,
-                     _healthMetrics['heart_rate']['trend'],
-                   ),
-                   _buildMetricCard(
-                     'Blood Pressure',
-                     _healthMetrics['blood_pressure']['current'],
-                     Icons.monitor_heart,
-                     Colors.blue,
-                     _healthMetrics['blood_pressure']['trend'],
-                   ),
-                   _buildMetricCard(
-                     'Weight',
-                     '${_healthMetrics['weight']['current']} kg',
-                     Icons.scale,
-                     Colors.green,
-                     _healthMetrics['weight']['trend'],
-                   ),
-                   _buildMetricCard(
-                     'Sleep',
-                     '${_healthMetrics['sleep']['current']} hrs',
-                     Icons.bedtime,
-                     Colors.purple,
-                     _healthMetrics['sleep']['trend'],
-                   ),
-                 ],
-               );
-             },
-           ),
+          const SizedBox(height: 16),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final crossAxisCount = constraints.maxWidth > 500 ? 4 : 2;
+              final childAspectRatio = constraints.maxWidth > 500 ? 1.0 : 1.2;
+              
+              return GridView.count(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: childAspectRatio,
+                children: [
+                  _buildMetricCard(
+                    'Heart Rate',
+                    '${_healthMetrics['heart_rate']['current']} BPM',
+                    Icons.favorite,
+                    Colors.red,
+                    _healthMetrics['heart_rate']['trend'],
+                  ),
+                  _buildMetricCard(
+                    'Blood Pressure',
+                    _healthMetrics['blood_pressure']['current'],
+                    Icons.monitor_heart,
+                    Colors.blue,
+                    _healthMetrics['blood_pressure']['trend'],
+                  ),
+                  _buildMetricCard(
+                    'Weight',
+                    '${_healthMetrics['weight']['current']} kg',
+                    Icons.scale,
+                    Colors.green,
+                    _healthMetrics['weight']['trend'],
+                  ),
+                  _buildMetricCard(
+                    'Sleep',
+                    '${_healthMetrics['sleep']['current']} hrs',
+                    Icons.bedtime,
+                    Colors.purple,
+                    _healthMetrics['sleep']['trend'],
+                  ),
+                ],
+              );
+            },
+          ),
         ],
       ),
     );

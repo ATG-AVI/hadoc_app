@@ -70,29 +70,34 @@ class _DoctorDashboardState extends State<DoctorDashboard> {
       const ProfileScreen(),
     ];
 
+    String getAppBarTitle() {
+      if (_currentIndex == 1) {
+        return 'Chat with Patient';
+      } else if (_currentIndex == 2) {
+        return 'Profile';
+      }
+      return 'Doctor Dashboard';
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Doctor Dashboard'),
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppTheme.primaryTeal, AppTheme.primaryBlue],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+      appBar: _currentIndex == 2
+          ? null
+          : AppBar(
+              title: Text(getAppBarTitle()),
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              flexibleSpace: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppTheme.primaryTeal, AppTheme.primaryBlue],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: _loadData,
-            icon: const Icon(Icons.refresh),
-          ),
-        ],
-      ),
       body: pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
